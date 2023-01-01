@@ -42,8 +42,8 @@ jobs:
        rm -rf ./Config/
     - name: 🔀 Git #Git
       run: |
-        git fetch
-        git checkout origin/config
+        git pull
+        git checkout config
         git add .
         git commit -m "自动更新数据 $(date '+%Y.%m.%d %H:%M:%S')"
         git pull
