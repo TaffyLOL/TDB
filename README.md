@@ -1,2 +1,0 @@
-# TDB
-Taffy Database [Dev]
