@@ -42,13 +42,13 @@ jobs:
        rm -rf ./Config/
     - name: 🔀 Git #Git
       run: |
+        git pull
+        git checkout config
         status_log=$(git status -sb)
         echo "$status_log"
         if [ "$status_log" == "## config...origin/config" ];then
           echo -e "\033[42;30m nothing to commit, working tree clean \033[0m"
         else
-          git pull
-          git checkout config
           git status -s
           git add .
           git commit -m "自动更新数据 $(date '+%Y.%m.%d %H:%M:%S')"
