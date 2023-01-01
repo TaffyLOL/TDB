@@ -1,2 +1,2 @@
 # TDB
-Taffy Database [Dev]
+Taffy Database
