@@ -29,6 +29,10 @@ jobs:
       run: |
         cd ./Script/
         yarn start
+    - name: Change
+      run: |
+        git fetch
+        git checkout config
     - name: 🗑️ Delete #删除文件
       run: |
         rm -rf ./DB/
@@ -42,9 +46,6 @@ jobs:
        rm -rf ./Config/
     - name: 🔀 Git #Git
       run: |
-        git clean -d -fx ""
-        git pull
-        git checkout config
         status_log=$(git status -sb)
         echo "$status_log"
         if [ "$status_log" == "## config...origin/config" ];then
