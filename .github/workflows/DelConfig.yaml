@@ -1,0 +1,33 @@
+name: DelConfig
+
+on:
+  workflow_dispatch: #手动调试按钮
+
+jobs:
+  DelConfig:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 #Git Clone
+    - uses: actions/setup-node@v3 #Node.js环境
+      with:
+        node-version: '16.x' #Node.js 16.x
+    - name: 🔧 Timezone #UTC+0 → UTC+8
+      run: sudo timedatectl set-timezone 'Asia/Shanghai'
+    - name: 🔧 Git #配置Git的上传用户名和邮箱
+      run: |
+        git config pull.rebase false
+        git config --local user.name "GitHub Actions"
+        git config --local user.email "actions@github.com"
+    - name: 🔀 Change #更改分支
+      run: |
+        git fetch
+        git checkout config
+    - name: 🗑️ Delete #删除文件
+      run: |
+        rm -rf *
+    - name: 🔀 Git #Git
+      run: |
+        git add .
+        git commit -m "手动删除所有文件 $(date '+%Y.%m.%d %H:%M:%S')"
+        git pull
+        git push
