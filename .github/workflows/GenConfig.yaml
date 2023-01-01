@@ -43,7 +43,7 @@ jobs:
     - name: 🔀 Git #Git
       run: |
         git fetch
-        git checkout config
+        git checkout origin/config
         git add .
         git commit -m "自动更新数据 $(date '+%Y.%m.%d %H:%M:%S')"
         git pull
