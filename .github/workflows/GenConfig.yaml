@@ -42,9 +42,14 @@ jobs:
        rm -rf ./Config/
     - name: 🔀 Git #Git
       run: |
-        git pull
-        git checkout config
+        git fetch
+        echo 1
+        git checkout -f config
+        echo 1
         git add .
+        echo 1
         git commit -m "自动更新数据 $(date '+%Y.%m.%d %H:%M:%S')"
+        echo 1
         git pull
+        echo 1
         git push
