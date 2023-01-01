@@ -42,6 +42,7 @@ jobs:
        rm -rf ./Config/
     - name: 🔀 Git #Git
       run: |
+        git clean -d -fx ""
         git pull
         git checkout config
         status_log=$(git status -sb)
