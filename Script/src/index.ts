@@ -17,6 +17,7 @@ type LiveDataType = {
 
 const PageData: {
   [key: number]: {
+    data: [string, string];
     dm?: [string, string]; // [文件名,CommitID]
     watch?: [string, string];
     d_dm?: [string, string];
@@ -59,6 +60,7 @@ const GenPageData = (ConfigPath: string) => {
 
   type PagesDataType = {
     time: number;
+    data: [string, string];
     dm?: [string, string]; // [文件名,CommitID]
     watch?: [string, string];
     d_dm?: [string, string];
@@ -68,7 +70,7 @@ const GenPageData = (ConfigPath: string) => {
   for (const i in PDP) {
     const PagesData: PagesDataType[] = [];
     for (const Time of PDP[i]) {
-      const d: PagesDataType = { time: Time };
+      const d: PagesDataType = { time: Time, data: PageData[Time].data };
       if (PageData[Time].dm !== undefined) d.dm = PageData[Time].dm;
       if (PageData[Time].watch !== undefined) d.watch = PageData[Time].watch;
       if (PageData[Time].d_dm !== undefined) d.d_dm = PageData[Time].d_dm;
@@ -118,7 +120,9 @@ const main = () => {
         if (has_data === false) continue;
 
         /* FileData */
-        PageData[TimeFilesName_Number] = {};
+        PageData[TimeFilesName_Number] = {
+          data: [has_data, GetFileCommitID(path.join(FilesPath, has_data))],
+        };
         if (has_dm !== false) PageData[TimeFilesName_Number].dm = [has_dm, GetFileCommitID(path.join(FilesPath, has_dm))];
         if (has_watch !== false) PageData[TimeFilesName_Number].watch = [has_watch, GetFileCommitID(path.join(FilesPath, has_watch))];
         if (has_d_dm !== false) PageData[TimeFilesName_Number].d_dm = [has_d_dm, GetFileCommitID(path.join(FilesPath, has_d_dm))];
