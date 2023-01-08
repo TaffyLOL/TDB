@@ -58,3 +58,21 @@ jobs:
           git pull
           git push
         fi
+  
+  Update-JsDelivr:
+    needs: GenConfig
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3 #Git Clone
+    - name: Git
+      run: |
+        git fetch
+        git checkout config
+    - name: Update
+      run: |
+        FileNum=$(ls -l |grep "^-"|wc -l)
+        let FileNum=${FileNum}-1
+        for num in $(seq 1 ${FileNum})
+        do
+          curl https://purge.jsdelivr.net/gh/TaffyLOL/TDB@config/${num}.json
+        done
