@@ -57,16 +57,18 @@ const GenPageData = (ConfigPath: string) => {
     PDP.push(PD.slice(i, i + p));
   };
 
+  type PagesDataType = {
+    time: number;
+    dm?: [string, string]; // [文件名,CommitID]
+    watch?: [string, string];
+    d_dm?: [string, string];
+    d_watch?: [string, string];
+  };
+  const FilesData: PagesDataType[][] = [];
   for (const i in PDP) {
-    const PagesData = [];
+    const PagesData: PagesDataType[] = [];
     for (const Time of PDP[i]) {
-      const d: {
-        time: number;
-        dm?: [string, string]; // [文件名,CommitID]
-        watch?: [string, string];
-        d_dm?: [string, string];
-        d_watch?: [string, string];
-      } = { time: Time };
+      const d: PagesDataType = { time: Time };
       if (PageData[Time].dm !== undefined) d.dm = PageData[Time].dm;
       if (PageData[Time].watch !== undefined) d.watch = PageData[Time].watch;
       if (PageData[Time].d_dm !== undefined) d.d_dm = PageData[Time].d_dm;
@@ -74,7 +76,17 @@ const GenPageData = (ConfigPath: string) => {
       PagesData.push(d);
     };
 
-    fs.writeFileSync(path.join(ConfigPath, `./${Number(i) + 1}.json`), JSON.stringify(PagesData), "utf-8");
+    FilesData.push(PagesData);
+  };
+
+  const TotalPagesNum = FilesData.length; // 总页数
+  for (const i in FilesData) {
+    const PagesData = FilesData[i];
+    fs.writeFileSync(
+      path.join(ConfigPath, `./${Number(i) + 1}.json`),
+      JSON.stringify({ TotalPagesNum, data: PagesData }),
+      "utf-8"
+    );
   };
 };
 
