@@ -15,7 +15,7 @@ type LiveDataType = {
   TimeLine: []; // 时间线
 };
 
-const PageData: {
+const LiveFilesData: {
   [key: number]: {
     data: [string, string];
     dm?: [string, string]; // [文件名,CommitID]
@@ -45,18 +45,20 @@ const MkdirPath = (p: string) => {
 };
 
 const GenPageData = (ConfigPath: string) => {
-
   /* 分页 */
-  const p = 5;
-  let PD: number[] = [];
-  for (const i in PageData) {
-    PD.push(Number(i));
-  };
-  PD = PD.sort((a, b) => b - a);
-  let PDP: number[][] = [];
-  for (let i = 0; i <= PD.length; i += p) {
-    PDP.push(PD.slice(i, i + p));
-  };
+  const LiveTimePagesList: number[][] = ((): number[][] => {
+    const p = 5;
+    let tmp: number[] = [];
+    for (const i in LiveFilesData) tmp.push(Number(i));
+    tmp = tmp.sort((a, b) => b - a); // 排序
+
+    let PagesList: number[][] = [];
+    for (let i = 0; i <= tmp.length; i += p) {
+      PagesList.push(tmp.slice(i, i + p));
+    };
+
+    return PagesList;
+  })();
 
   type PagesDataType = {
     time: number;
@@ -66,30 +68,26 @@ const GenPageData = (ConfigPath: string) => {
     d_dm?: [string, string];
     d_watch?: [string, string];
   };
-  const FilesData: PagesDataType[][] = [];
-  for (const i in PDP) {
-    const PagesData: PagesDataType[] = [];
-    for (const Time of PDP[i]) {
-      const d: PagesDataType = { time: Time, data: PageData[Time].data };
-      if (PageData[Time].dm !== undefined) d.dm = PageData[Time].dm;
-      if (PageData[Time].watch !== undefined) d.watch = PageData[Time].watch;
-      if (PageData[Time].d_dm !== undefined) d.d_dm = PageData[Time].d_dm;
-      if (PageData[Time].d_watch !== undefined) d.d_watch = PageData[Time].d_watch;
-      PagesData.push(d);
+  const PagesData: PagesDataType[][] = [];
+  for (const i in LiveTimePagesList) {
+    const PageData: PagesDataType[] = [];
+    for (const Time of LiveTimePagesList[i]) {
+      const d: PagesDataType = { time: Time, data: LiveFilesData[Time].data };
+      if (LiveFilesData[Time].dm !== undefined) d.dm = LiveFilesData[Time].dm;
+      if (LiveFilesData[Time].watch !== undefined) d.watch = LiveFilesData[Time].watch;
+      if (LiveFilesData[Time].d_dm !== undefined) d.d_dm = LiveFilesData[Time].d_dm;
+      if (LiveFilesData[Time].d_watch !== undefined) d.d_watch = LiveFilesData[Time].d_watch;
+      PageData.push(d);
     };
 
-    FilesData.push(PagesData);
+    PagesData.push(PageData);
   };
 
-  const TotalPagesNum = FilesData.length; // 总页数
-  for (const i in FilesData) {
-    const PagesData = FilesData[i];
-    fs.writeFileSync(
-      path.join(ConfigPath, `./${Number(i) + 1}.json`),
-      JSON.stringify({ TotalPagesNum, data: PagesData }),
-      "utf-8"
-    );
-  };
+  fs.writeFileSync(
+    path.join(ConfigPath, `./pages.json`),
+    JSON.stringify({ data: PagesData }),
+    "utf-8"
+  );
 };
 
 const main = () => {
@@ -120,13 +118,13 @@ const main = () => {
         if (has_data === false) continue;
 
         /* FileData */
-        PageData[TimeFilesName_Number] = {
+        LiveFilesData[TimeFilesName_Number] = {
           data: [has_data, GetFileCommitID(path.join(FilesPath, has_data))],
         };
-        if (has_dm !== false) PageData[TimeFilesName_Number].dm = [has_dm, GetFileCommitID(path.join(FilesPath, has_dm))];
-        if (has_watch !== false) PageData[TimeFilesName_Number].watch = [has_watch, GetFileCommitID(path.join(FilesPath, has_watch))];
-        if (has_d_dm !== false) PageData[TimeFilesName_Number].d_dm = [has_d_dm, GetFileCommitID(path.join(FilesPath, has_d_dm))];
-        if (has_d_watch !== false) PageData[TimeFilesName_Number].d_watch = [has_d_watch, GetFileCommitID(path.join(FilesPath, has_d_watch))];
+        if (has_dm !== false) LiveFilesData[TimeFilesName_Number].dm = [has_dm, GetFileCommitID(path.join(FilesPath, has_dm))];
+        if (has_watch !== false) LiveFilesData[TimeFilesName_Number].watch = [has_watch, GetFileCommitID(path.join(FilesPath, has_watch))];
+        if (has_d_dm !== false) LiveFilesData[TimeFilesName_Number].d_dm = [has_d_dm, GetFileCommitID(path.join(FilesPath, has_d_dm))];
+        if (has_d_watch !== false) LiveFilesData[TimeFilesName_Number].d_watch = [has_d_watch, GetFileCommitID(path.join(FilesPath, has_d_watch))];
 
         /* TagData */
         const LiveData: {
